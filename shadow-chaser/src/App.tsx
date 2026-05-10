@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
 import ActivitySummary from './components/ActivitySummary';
+import RouteReportingMockup from './components/RouteReportingMockup';
 import { Calendar } from 'lucide-react';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
@@ -123,6 +124,8 @@ function App() {
           onStartNavigation={handleStartNavigation}
         />
       )}
+
+      {!isNavigating && <RouteReportingMockup />}
 
       {/* Top Right Calendar Widget (hidden on mobile) */}
       <div className="calendar-widget glass-panel hidden-mobile">
