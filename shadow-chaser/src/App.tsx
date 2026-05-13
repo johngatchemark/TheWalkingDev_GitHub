@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
+import CommunityReportButton from './components/CommunityReportButton';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -40,6 +41,17 @@ function App() {
   const [shadeScanNonce, setShadeScanNonce] = useState(0);
   const [nightLightScores, setNightLightScores] = useState<Record<string, number>>({});
   const [showSummary, setShowSummary] = useState<boolean>(true); // Show summary by default
+
+  // Sheet position tracking for CommunityReportButton
+  const [sheetSnap, setSheetSnap] = useState<'collapsed' | 'mid' | 'expanded'>('mid');
+  const [sheetDragY, setSheetDragY] = useState(0);
+  const handleSheetChange = useCallback(
+    (snap: 'collapsed' | 'mid' | 'expanded', dragY: number) => {
+      setSheetSnap(snap);
+      setSheetDragY(dragY);
+    },
+    [],
+  );
 
   const handleStartNavigation = () => {
     const routeIdToUse = selectedRouteId ?? routeOptions[0]?.id ?? null;
@@ -115,6 +127,15 @@ function App() {
           onRequestShadeScan={() => setShadeScanNonce((n) => n + 1)}
           setUserLocationCoords={setUserLocationCoords}
           onStartNavigation={handleStartNavigation}
+          onSheetChange={handleSheetChange}
+        />
+      )}
+
+      {/* Community Report floating button */}
+      {!isNavigating && (
+        <CommunityReportButton
+          mobileSheetSnap={sheetSnap}
+          sheetDragY={sheetDragY}
         />
       )}
 

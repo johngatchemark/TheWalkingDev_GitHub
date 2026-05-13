@@ -181,6 +181,8 @@ interface RoutePanelProps {
   onRequestShadeScan: () => void;
   setUserLocationCoords: (coords: [number, number] | null) => void;
   onStartNavigation: () => void;
+  /** Called whenever the mobile sheet position changes so siblings can track it */
+  onSheetChange?: (snap: "collapsed" | "mid" | "expanded", dragY: number) => void;
 }
 
 function timeStringToMinutes(time: string): number {
@@ -302,11 +304,17 @@ export default function RoutePanel({
   onRequestShadeScan,
   setUserLocationCoords,
   onStartNavigation,
+  onSheetChange,
 }: RoutePanelProps) {
   const [mobileSheetSnap, setMobileSheetSnap] = useState<
     "collapsed" | "mid" | "expanded"
   >("mid");
   const [sheetDragY, setSheetDragY] = useState(0);
+
+  // Notify parent whenever sheet position changes
+  useEffect(() => {
+    onSheetChange?.(mobileSheetSnap, sheetDragY);
+  }, [mobileSheetSnap, sheetDragY, onSheetChange]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSteps, setShowSteps] = useState(false);
