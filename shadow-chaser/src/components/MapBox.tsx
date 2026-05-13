@@ -23,6 +23,12 @@ interface MapBoxProps {
   isNavigating: boolean;
   activeRoute: RouteOption | null;
   onExitNavigation: () => void;
+  /** When true, the next map tap fires onMapPin instead of selecting a route */
+  isPinMode?: boolean;
+  /** Called with [lng, lat] when user taps the map in pin mode */
+  onMapPin?: (coords: [number, number]) => void;
+  /** Currently pinned community-report coords (shows a marker on the map) */
+  pinnedReportCoords?: [number, number] | null;
 }
 
 interface TerrainTile { x: number; y: number; z: number; }
@@ -71,7 +77,10 @@ export default function MapBox({
   isNavigating,
   activeRoute,
   onExitNavigation,
-  shadeScanNonce
+  shadeScanNonce,
+  isPinMode = false,
+  onMapPin,
+  pinnedReportCoords,
 }: MapBoxProps) {
   const mapRef = useRef<MapRef>(null);
   const shadeMapRef = useRef<any>(null);
@@ -613,6 +622,11 @@ export default function MapBox({
           antialias={true}
           onLoad={handleMapLoad}
           onClick={(e) => {
+            // Pin mode: capture coords for community report
+            if (isPinMode && onMapPin) {
+              onMapPin([e.lngLat.lng, e.lngLat.lat]);
+              return;
+            }
             if (e.features && e.features.length > 0 && e.features[0].layer) {
               const layerId = e.features[0].layer.id;
               if (layerId.startsWith('route-') && layerId.endsWith('-line')) {
@@ -620,6 +634,7 @@ export default function MapBox({
               }
             }
           }}
+          cursor={isPinMode ? 'crosshair' : 'grab'}
           interactiveLayerIds={routeOptions.map(o => `route-${o.id}-line`)}
         >
           <NavigationControl position="bottom-right" visualizePitch={true} />
@@ -745,6 +760,27 @@ export default function MapBox({
                 <svg className="arrow-icon-svg" viewBox="0 0 42 48">
                   <path d="M21 0L42 48L21 38L0 48L21 0Z" />
                 </svg>
+              </div>
+            </Marker>
+          )}
+
+          {/* Community Report Pin Marker */}
+          {pinnedReportCoords && (
+            <Marker
+              longitude={pinnedReportCoords[0]}
+              latitude={pinnedReportCoords[1]}
+              anchor="bottom"
+            >
+              <div className="report-pin-marker" title="Report location">
+                <svg viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="40">
+                  {/* Pin body */}
+                  <path d="M16 0C9.373 0 4 5.373 4 12c0 8 12 28 12 28S28 20 28 12C28 5.373 22.627 0 16 0z" fill="#F5C518" stroke="#D4A800" strokeWidth="1.5"/>
+                  {/* Exclamation stem */}
+                  <rect x="14" y="7" width="4" height="9" rx="2" fill="#1a1a1a"/>
+                  {/* Exclamation dot */}
+                  <circle cx="16" cy="19.5" r="2.5" fill="#1a1a1a"/>
+                </svg>
+                <div className="report-pin-pulse" />
               </div>
             </Marker>
           )}

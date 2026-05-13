@@ -60,13 +60,39 @@ function App() {
   const [pinnedLabel, setPinnedLabel] = useState<string | null>(null);
   const [isPinMode, setIsPinMode] = useState(false);
 
-  const handleRequestPin = () => {
-    // TODO: wire map click-to-pin when implementing business logic
-    // For now, simulate a pinned location near BGC for demo purposes
+  const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
+
+  /** Reverse-geocode [lng, lat] via Mapbox to get a human-readable place name */
+  const reverseGeocode = useCallback(async (coords: [number, number]): Promise<string> => {
+    if (!MAPBOX_TOKEN) return `${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`;
+    try {
+      const res = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?types=address,poi,neighborhood,locality&language=en&access_token=${MAPBOX_TOKEN}`
+      );
+      if (!res.ok) throw new Error('geocode failed');
+      const data = await res.json();
+      const place = data.features?.[0];
+      return place?.place_name ?? `${coords[1].toFixed(5)}°N, ${coords[0].toFixed(5)}°E`;
+    } catch {
+      return `${coords[1].toFixed(5)}°N, ${coords[0].toFixed(5)}°E`;
+    }
+  }, [MAPBOX_TOKEN]);
+
+  /** Called when user presses "Tap to Pin on Map" — minimizes the panel and enters pin mode */
+  const handleRequestPin = useCallback(() => {
+    setIsReportOpen(false); // close panel so map is fully interactive
     setIsPinMode(true);
-    setPinnedCoords([121.0437, 14.5472]);
-    setPinnedLabel('Bonifacio Global City, Taguig');
-  };
+  }, []);
+
+  /** Called when user taps the map in pin mode — captures coords, geocodes, restores panel */
+  const handleMapPin = useCallback(async (coords: [number, number]) => {
+    setIsPinMode(false);
+    setPinnedCoords(coords);
+    setPinnedLabel(null); // show loading state
+    const label = await reverseGeocode(coords);
+    setPinnedLabel(label);
+    setIsReportOpen(true);
+  }, [reverseGeocode]);
 
   const handleStartNavigation = () => {
     const routeIdToUse = selectedRouteId ?? routeOptions[0]?.id ?? null;
@@ -121,6 +147,9 @@ function App() {
         isNavigating={isNavigating}
         activeRoute={activeRoute}
         onExitNavigation={() => setIsNavigating(false)}
+        isPinMode={isPinMode}
+        onMapPin={handleMapPin}
+        pinnedReportCoords={pinnedCoords}
       />
 
       {/* Navigation UI Layer */}
@@ -153,6 +182,13 @@ function App() {
         onClick={() => setIsReportOpen(true)}
       />
 
+      {/* Pin mode: instruction banner only — map must stay interactive */}
+      {isPinMode && (
+        <div className="pin-mode-banner">
+          📍 Tap anywhere on the map to pin the location
+        </div>
+      )}
+
       {/* Community Report Panel */}
       <CommunityReportPanel
         isOpen={isReportOpen}
@@ -166,6 +202,7 @@ function App() {
         onRequestPin={handleRequestPin}
         pinnedCoords={pinnedCoords}
         pinnedLabel={pinnedLabel}
+        isPinning={isPinMode}
       />
 
 

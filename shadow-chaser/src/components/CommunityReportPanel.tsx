@@ -108,12 +108,14 @@ interface CommunityReportPanelProps {
   isOpen: boolean;
   onClose: () => void;
   isNight: boolean;
-  /** Callback fired when user confirms pinpoint — parent should enter "tap-to-pin" mode */
+  /** Fires when user wants to tap the map — panel should minimize */
   onRequestPin: () => void;
   /** Coords of pinned location, set by parent after map tap */
   pinnedCoords: [number, number] | null;
   /** Human-readable label for pinned location */
   pinnedLabel: string | null;
+  /** True while we are waiting for the user to tap the map */
+  isPinning: boolean;
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -125,6 +127,7 @@ export default function CommunityReportPanel({
   onRequestPin,
   pinnedCoords,
   pinnedLabel,
+  isPinning,
 }: CommunityReportPanelProps) {
   const [step, setStep] = useState<ReportStep>("location");
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -142,15 +145,15 @@ export default function CommunityReportPanel({
       setStep("location");
       setSelectedType(null);
       setDetails("");
-      setMobileSheetSnap("mid");
+      setMobileSheetSnap("expanded");
       setSheetDragY(0);
     }
   }, [isOpen]);
 
-  // Snap to expanded when step changes (keep content visible)
+  // Snap to expanded when step changes so content + footer are fully visible
   useEffect(() => {
     if (isOpen) {
-      setMobileSheetSnap("mid");
+      setMobileSheetSnap("expanded");
       scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [step, isOpen]);
@@ -310,11 +313,12 @@ export default function CommunityReportPanel({
               </p>
 
               <button
-                className={`crp-pin-btn action-button ${isNight ? "night-mode" : ""}`}
+                className={`crp-pin-btn action-button ${isNight ? "night-mode" : ""} ${isPinning ? "crp-pin-btn--waiting" : ""}`}
                 onClick={onRequestPin}
+                disabled={isPinning}
               >
                 <Navigation size={16} />
-                Tap to Pin on Map
+                {isPinning ? "Tap the map to pin…" : pinnedCoords ? "Re-pin Location" : "Tap to Pin on Map"}
               </button>
 
               {pinnedCoords ? (
