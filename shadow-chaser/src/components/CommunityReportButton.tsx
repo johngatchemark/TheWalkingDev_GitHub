@@ -6,6 +6,8 @@ interface CommunityReportButtonProps {
   mobileSheetSnap: "collapsed" | "mid" | "expanded";
   /** Live drag offset in px while the user is dragging the sheet */
   sheetDragY: number;
+  /** Called when the button is pressed */
+  onClick: () => void;
 }
 
 /** Maps snap name → translateY percent used by the sheet (mirrors RoutePanel) */
@@ -23,6 +25,7 @@ function getSnapOffsetPercent(snap: "collapsed" | "mid" | "expanded"): number {
 export default function CommunityReportButton({
   mobileSheetSnap,
   sheetDragY,
+  onClick,
 }: CommunityReportButtonProps) {
   // Mobile bottom offset so the button sits just above the sheet's visible top edge.
   // The sheet is: position=fixed, bottom=0, height=calc(100vh - 120px).
@@ -52,6 +55,7 @@ export default function CommunityReportButton({
       className="community-report-btn"
       aria-label="Report a community issue"
       title="Report a community issue"
+      onClick={onClick}
       style={
         {
           "--mobile-bottom": `${mobileBottom}px`,

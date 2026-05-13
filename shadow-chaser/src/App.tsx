@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
 import CommunityReportButton from './components/CommunityReportButton';
+import CommunityReportPanel from './components/CommunityReportPanel';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -52,6 +53,20 @@ function App() {
     },
     [],
   );
+
+  // Community Report state
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [pinnedCoords, setPinnedCoords] = useState<[number, number] | null>(null);
+  const [pinnedLabel, setPinnedLabel] = useState<string | null>(null);
+  const [isPinMode, setIsPinMode] = useState(false);
+
+  const handleRequestPin = () => {
+    // TODO: wire map click-to-pin when implementing business logic
+    // For now, simulate a pinned location near BGC for demo purposes
+    setIsPinMode(true);
+    setPinnedCoords([121.0437, 14.5472]);
+    setPinnedLabel('Bonifacio Global City, Taguig');
+  };
 
   const handleStartNavigation = () => {
     const routeIdToUse = selectedRouteId ?? routeOptions[0]?.id ?? null;
@@ -131,13 +146,27 @@ function App() {
         />
       )}
 
-      {/* Community Report floating button */}
-      {!isNavigating && (
-        <CommunityReportButton
-          mobileSheetSnap={sheetSnap}
-          sheetDragY={sheetDragY}
-        />
-      )}
+      {/* Community Report floating button — always visible */}
+      <CommunityReportButton
+        mobileSheetSnap={isNavigating ? 'collapsed' : sheetSnap}
+        sheetDragY={isNavigating ? 0 : sheetDragY}
+        onClick={() => setIsReportOpen(true)}
+      />
+
+      {/* Community Report Panel */}
+      <CommunityReportPanel
+        isOpen={isReportOpen}
+        onClose={() => {
+          setIsReportOpen(false);
+          setIsPinMode(false);
+          setPinnedCoords(null);
+          setPinnedLabel(null);
+        }}
+        isNight={isNight}
+        onRequestPin={handleRequestPin}
+        pinnedCoords={pinnedCoords}
+        pinnedLabel={pinnedLabel}
+      />
 
 
       {/* Top Right Calendar Widget (hidden on mobile) */}

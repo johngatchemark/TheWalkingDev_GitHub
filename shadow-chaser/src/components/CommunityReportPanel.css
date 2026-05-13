@@ -1,0 +1,502 @@
+/* ─── Community Report Panel ───────────────────────────────────────────────── */
+
+/* ── Backdrop overlay ──────────────────────────────────────────────────────── */
+.crp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.crp-overlay--visible {
+  pointer-events: all;
+}
+
+/* Desktop: dim backdrop */
+@media (min-width: 768px) {
+  .crp-overlay--visible {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+/* ── Panel shell ───────────────────────────────────────────────────────────── */
+.crp-panel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Desktop: slide in from right, fixed width */
+@media (min-width: 768px) {
+  .crp-panel {
+    top: 24px;
+    right: 92px; /* 24px gap + 56px btn + 12px */
+    width: 380px;
+    max-height: calc(100vh - 48px);
+    border-radius: 24px;
+    padding: 24px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+}
+
+/* Mobile: bottom sheet (same pattern as assistant-sidebar / RoutePanel) */
+@media (max-width: 767px) {
+  .crp-panel {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 8px 12px 12px 12px;
+    gap: 4px;
+    height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    border-bottom: none;
+    transform: var(--crp-mobile-transform, translateY(42%));
+  }
+}
+
+/* ── Pull tab override (reuse .pull-tab) ───────────────────────────────────── */
+.crp-pull-tab {
+  cursor: grab;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+.crp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.crp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crp-header-eyebrow {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.crp-header-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.crp-close-btn,
+.crp-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-main);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.crp-close-btn:hover,
+.crp-back-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ── Progress bar ──────────────────────────────────────────────────────────── */
+.crp-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.crp-progress-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.crp-progress-fill {
+  height: 100%;
+  background: #fbbf24;
+  border-radius: 2px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.crp-progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.crp-progress-dot--active {
+  background: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.5);
+}
+
+/* ── Body (scrollable) ─────────────────────────────────────────────────────── */
+.crp-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 2px;
+}
+
+.crp-body::-webkit-scrollbar {
+  width: 4px;
+}
+.crp-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.crp-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+
+/* ── Step container ────────────────────────────────────────────────────────── */
+.crp-step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.crp-step-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── STEP: Location ────────────────────────────────────────────────────────── */
+.crp-pin-btn {
+  width: 100%;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+}
+
+.crp-location-confirmed {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.crp-location-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.crp-location-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.crp-location-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crp-location-coords {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-feature-settings: "tnum";
+}
+
+.crp-check {
+  flex-shrink: 0;
+}
+
+.crp-location-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 16px;
+  border-radius: 16px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.crp-map-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.crp-map-hint-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.crp-map-hint strong {
+  color: var(--text-main);
+}
+
+/* ── STEP: Report Type ─────────────────────────────────────────────────────── */
+.crp-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* 3-column on wider desktop */
+@media (min-width: 1024px) {
+  .crp-type-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.crp-type-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 12px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    transform 0.15s;
+}
+
+.crp-type-card:active {
+  transform: scale(0.97);
+}
+
+.crp-type-card--selected {
+  background: var(--rt-bg, rgba(255, 255, 255, 0.08));
+  border-color: var(--rt-color, rgba(255, 255, 255, 0.3));
+}
+
+.crp-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--rt-bg, rgba(255, 255, 255, 0.07));
+  color: var(--rt-color, var(--text-muted));
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.crp-type-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.crp-type-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--rt-color, #22c55e);
+}
+
+/* ── STEP: Details ─────────────────────────────────────────────────────────── */
+.crp-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crp-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crp-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  padding: 13px 14px;
+  resize: vertical;
+  min-height: 110px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.crp-textarea:focus {
+  border-color: #fbbf24;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.crp-textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.crp-char-count {
+  text-align: right;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: -8px;
+}
+
+/* ── STEP: Success ─────────────────────────────────────────────────────────── */
+.crp-step-success {
+  align-items: center;
+  text-align: center;
+  padding-top: 12px;
+}
+
+.crp-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1.5px solid rgba(34, 197, 94, 0.25);
+  margin-bottom: 4px;
+}
+
+.crp-success-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.crp-success-body {
+  font-size: 0.87rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.crp-success-card {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  margin-top: 4px;
+}
+
+.crp-success-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crp-success-details {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-style: italic;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+
+.crp-done-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.crp-footer {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.crp-next-btn {
+  width: 100%;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  font-size: 0.96rem;
+}
+
+.crp-next-btn--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
