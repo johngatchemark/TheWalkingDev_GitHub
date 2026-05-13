@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import lakadLogo from '../assets/LakadPHLogo.png';
 import {
   Navigation,
@@ -304,6 +304,9 @@ export default function RoutePanel({
   const destDebounce   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartYRef = useRef<number | null>(null);
   const timeSelectorRef = useRef<HTMLDivElement | null>(null);
+  const sheetScrollContentRef = useRef<HTMLDivElement | null>(null);
+  const routeOptionsSectionRef = useRef<HTMLDivElement | null>(null);
+  const shouldAutoScrollToOptionsRef = useRef(false);
 
   const isNight = isNightFromTime(selectedTime);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -556,6 +559,7 @@ export default function RoutePanel({
 
   const handleFindRoute = async () => {
     if (!destination.text.trim()) return;
+    shouldAutoScrollToOptionsRef.current = true;
     setError(null);
     onSelectRoute(null);
     setRouteOptions([]);
@@ -575,21 +579,46 @@ export default function RoutePanel({
         if (destCoords) setDestination({ ...destination, coords: destCoords });
       }
 
-      if (!originCoords) { setError('Could not find the origin location.'); return; }
-      if (!destCoords) { setError('Could not find the destination location.'); return; }
+      if (!originCoords) {
+        shouldAutoScrollToOptionsRef.current = false;
+        setError('Could not find the origin location.');
+        return;
+      }
+      if (!destCoords) {
+        shouldAutoScrollToOptionsRef.current = false;
+        setError('Could not find the destination location.');
+        return;
+      }
 
       const options = await fetchThreePathOptions(originCoords, destCoords);
-      if (options.length === 0) { setError('No walking routes found between these locations.'); return; }
+      if (options.length === 0) {
+        shouldAutoScrollToOptionsRef.current = false;
+        setError('No walking routes found between these locations.');
+        return;
+      }
 
       setRouteOptions(options);
       onRequestShadeScan();
       setShowSteps(true);
     } catch {
+      shouldAutoScrollToOptionsRef.current = false;
       setError('Failed to fetch directions. Check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!routeOptions.length || !shouldAutoScrollToOptionsRef.current) return;
+    shouldAutoScrollToOptionsRef.current = false;
+    const container = sheetScrollContentRef.current;
+    const target = routeOptionsSectionRef.current;
+    if (!container || !target) return;
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const scrollTop = container.scrollTop + (targetRect.top - containerRect.top) - 10;
+    container.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
+  }, [routeOptions.length]);
 
   const selectedOption = routeOptions.find(o => o.id === selectedRouteId) || routeOptions[0];
   const primaryRoute = selectedOption?.route;
@@ -807,7 +836,7 @@ export default function RoutePanel({
         </button>
       </div>
 
-      <div className="sheet-scroll-content">
+      <div className="sheet-scroll-content" ref={sheetScrollContentRef}>
 
         {/* Dev warning if Google key is missing */}
         {!GOOGLE_KEY && (
@@ -961,8 +990,7 @@ export default function RoutePanel({
         )}
 
         {routeOptions.length > 0 && (
-
-          <div>
+          <div ref={routeOptionsSectionRef}>
             <div className="route-summary">
             <div className="route-options-list">
               {rankedRouteOptions.map((option, idx) => {
