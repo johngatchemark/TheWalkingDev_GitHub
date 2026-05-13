@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
-import ActivitySummary from './components/ActivitySummary';
-import RouteReportingMockup from './components/RouteReportingMockup';
-import { Calendar } from 'lucide-react';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -56,10 +53,6 @@ function App() {
   };
 
   const isNight = isNightFromTime(selectedTime);
-
-  if (showSummary) {
-    return <ActivitySummary onClose={() => setShowSummary(false)} />;
-  }
 
   return (
     <div className={`app-container ${isNight ? 'night-theme' : ''} ${isNavigating ? 'is-navigating' : ''}`}>
@@ -125,13 +118,12 @@ function App() {
         />
       )}
 
-      {!isNavigating && <RouteReportingMockup />}
 
       {/* Top Right Calendar Widget (hidden on mobile) */}
-      <div className="calendar-widget glass-panel hidden-mobile">
+      {/* <div className="calendar-widget glass-panel hidden-mobile">
         <Calendar size={16} color="var(--accent-cool)" />
         <span className="cal-text">Synced: john@domain.com</span>
-      </div>
+      </div> */}
 
       {/* Map Legend (hidden on mobile) */}
       <div className="map-legend glass-panel hidden-mobile">

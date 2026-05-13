@@ -486,8 +486,13 @@ export default function MapBox({
       [Math.min(...lngs), Math.min(...lats)],
       [Math.max(...lngs), Math.max(...lats)]
     ];
+    const isMobile = window.innerWidth < 768;
+    const padding = isMobile
+      ? { top: 84, bottom: 300, left: 36, right: 36 }
+      : { top: 80, bottom: 80, left: 440, right: 90 };
     mapRef.current?.getMap().fitBounds(bounds, { 
-      padding: { top: 0, bottom: 0, left: 0, right: 0 }, 
+      padding,
+      maxZoom: 16.3,
       duration: 1200 
     });
   }, [routeOptions, mapLoaded]);
@@ -619,7 +624,7 @@ export default function MapBox({
         >
           <NavigationControl position="bottom-right" visualizePitch={true} />
           <Layer {...buildingLayer} />
-          
+
           {(() => {
             const ranked = [...routeOptions].sort((a, b) => (a.intensityScore ?? 999) - (b.intensityScore ?? 999));
             return ranked.map((option) => {
