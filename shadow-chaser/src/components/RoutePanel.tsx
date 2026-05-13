@@ -761,6 +761,16 @@ export default function RoutePanel({
           </div>
         )}
       </div>
+
+      <button
+        className={`action-button location-find-routes-btn ${isNight ? 'night-mode' : ''}`}
+        onClick={handleFindRoute}
+        disabled={isLoading || !destination.text.trim()}
+      >
+        {isLoading
+          ? <><Loader2 size={16} className="spin" /> Routing…</>
+          : 'Find Routes'}
+      </button>
     </div>
   );
 
@@ -875,7 +885,7 @@ export default function RoutePanel({
             </div>
           </div>
 
-          <div className="suggestion-cards">
+          {/* <div className="suggestion-cards">
             <div className="suggestion-card">
               <div className="suggestion-icon suggestion-icon-cool"><TreeDeciduous size={18} /></div>
               <div>
@@ -897,7 +907,7 @@ export default function RoutePanel({
                 <div className="suggestion-copy">A transit-assisted option saves time while keeping the walk comfortable.</div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {routeOptions.length > 0 && (
             <div className="route-comparison-grid">
@@ -941,17 +951,6 @@ export default function RoutePanel({
           </button>
         </div>
 
-        {/* This function was created using Generative AI */}
-        {/* Find Route Button */}
-        <button
-          className={`action-button ${isNight ? 'night-mode' : ''}`}
-          onClick={handleFindRoute}
-          disabled={isLoading || !destination.text.trim()}
-        >
-          {isLoading
-            ? <><Loader2 size={16} className="spin" /> Routing…</>
-            : 'Find Routes'}
-        </button>
         <hr className="route-content-divider route-button-divider" />
 
         {error && (

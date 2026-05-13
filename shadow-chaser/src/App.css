@@ -152,6 +152,13 @@ body {
     gap: 7px;
   }
 
+  .mobile-top-fields .location-find-routes-btn {
+    margin-top: 2px;
+    padding: 10px 12px;
+    font-size: 0.86rem;
+    border-radius: 10px;
+  }
+
   .mobile-top-fields .location-input {
     padding: 7px 10px;
     border-radius: 10px;
@@ -489,6 +496,11 @@ input[type=range]::-webkit-slider-thumb {
   gap: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+}
+
+.location-find-routes-btn {
+  width: 100%;
+  margin-top: 2px;
 }
 
 .action-button:active { transform: translateY(0); }

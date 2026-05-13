@@ -619,7 +619,7 @@ export default function MapBox({
         >
           <NavigationControl position="bottom-right" visualizePitch={true} />
           <Layer {...buildingLayer} />
-          
+
           {(() => {
             const ranked = [...routeOptions].sort((a, b) => (a.intensityScore ?? 999) - (b.intensityScore ?? 999));
             return ranked.map((option) => {
