@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import lakadLogo from '../assets/LakadPHLogo.png';
+import lakadLogo from '../assets/night-logo.webp';
 import {
   Navigation,
   MapPin,
