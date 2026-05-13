@@ -64,6 +64,12 @@ body {
 .sheet-scroll-content {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
   gap: 16px;
 }
 
@@ -83,6 +89,90 @@ body {
   display: none;
 }
 
+.menu-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-panel-btn {
+  width: 100%;
+}
+
+.menu-panel-popover {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+}
+
+.menu-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+}
+
+.menu-user-avatar.guest {
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+}
+
+.menu-user-text {
+  min-width: 0;
+}
+
+.menu-user-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.menu-user-role {
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.menu-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-option-btn {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu-option-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* Desktop Sidebar Styles */
 @media (min-width: 768px) {
   .assistant-sidebar {
@@ -94,6 +184,10 @@ body {
     gap: 24px;
     max-height: calc(100vh - 48px);
     overflow-y: auto;
+  }
+
+  .menu-panel-popover {
+    width: 100%;
   }
 }
 
@@ -184,6 +278,10 @@ body {
     max-height: calc(100vh - 120px);
     border-bottom: none;
     transform: var(--mobile-sheet-transform, translateY(42%));
+  }
+
+  .menu-panel-popover {
+    width: 100%;
   }
 
   .sheet-scroll-content {

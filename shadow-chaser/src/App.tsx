@@ -125,10 +125,10 @@ function App() {
       )}
 
       {/* Top Right Calendar Widget (hidden on mobile) */}
-      <div className="calendar-widget glass-panel hidden-mobile">
+      {/* <div className="calendar-widget glass-panel hidden-mobile">
         <Calendar size={16} color="var(--accent-cool)" />
         <span className="cal-text">Synced: john@domain.com</span>
-      </div>
+      </div> */}
 
       {/* Map Legend (hidden on mobile) */}
       <div className="map-legend glass-panel hidden-mobile">
