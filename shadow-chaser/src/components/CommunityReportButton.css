@@ -34,7 +34,7 @@
 @media (min-width: 768px) {
   .community-report-btn {
     top: 24px;
-    right: 168px; /* Swapped: moved to outer left position */
+    right: 240px; /* Shifted left */
     bottom: auto !important;
     left: auto;
     /* Slightly larger on desktop */
@@ -46,7 +46,7 @@
 /* ── Mobile placement: above the route panel ─────────────────────────────── */
 @media (max-width: 767px) {
   .community-report-btn {
-    right: 144px;
+    right: 208px; /* Shifted left */
     left: auto;
     top: 180px; /* Below the direction selector */
     bottom: auto !important;

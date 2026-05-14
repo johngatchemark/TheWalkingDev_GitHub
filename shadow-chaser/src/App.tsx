@@ -3,10 +3,12 @@ import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
 import CommunityReportButton from './components/CommunityReportButton';
 import CommunityReportPanel from './components/CommunityReportPanel';
+import RouteFeedbackModal from './components/RouteFeedbackModal';
 import AuthModule from './components/AuthModule';
 import MapOverlayUI from './components/MapOverlayUI';
 import CityDashboardButton from './components/CityDashboardButton';
 import MmdaDashboard from './components/MmdaDashboard';
+import MockTrackerButton from './components/MockTrackerButton';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -42,6 +44,7 @@ function App() {
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [userLocationCoords, setUserLocationCoords] = useState<[number, number] | null>(null);
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RouteOption | null>(null);
   const [shadeScanNonce, setShadeScanNonce] = useState(0);
   const [nightLightScores, setNightLightScores] = useState<Record<string, number>>({});
@@ -68,6 +71,7 @@ function App() {
 
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [showMockTracker, setShowMockTracker] = useState(false);
   
   // Lifted Auth State
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -129,6 +133,11 @@ function App() {
     setSelectedTime(night ? "20:00" : "12:00");
   };
 
+  const handleExitNavigation = useCallback(() => {
+    setIsNavigating(false);
+    setShowFeedbackModal(true);
+  }, []);
+
   return (
     <div className={`app-container ${isNight ? 'night-theme' : ''} ${isNavigating ? 'is-navigating' : ''}`}>
       {/* Mapbox Layer */}
@@ -168,11 +177,12 @@ function App() {
         shadeScanNonce={shadeScanNonce}
         isNavigating={isNavigating}
         activeRoute={activeRoute}
-        onExitNavigation={() => setIsNavigating(false)}
+        onExitNavigation={handleExitNavigation}
         isPinMode={isPinMode}
         onMapPin={handleMapPin}
         pinnedReportCoords={pinnedCoords}
         mapToggles={mapToggles}
+        showMockTracker={showMockTracker}
       />
 
       {/* Navigation UI Layer */}
@@ -244,6 +254,17 @@ function App() {
         isPinning={isPinMode}
       />
 
+      {/* Post-Navigation Route Feedback Modal */}
+      {showFeedbackModal && (
+        <RouteFeedbackModal 
+          onClose={() => setShowFeedbackModal(false)}
+          onSubmit={(feedback) => {
+            console.log('Feedback submitted:', feedback);
+            // In a real app, this would be sent to the backend
+            setShowFeedbackModal(false);
+          }}
+        />
+      )}
 
       {/* Top Right Profile / Auth / Dashboard */}
       <AuthModule 
@@ -256,7 +277,13 @@ function App() {
       />
       
       {!isNavigating && (
-        <CityDashboardButton onClick={() => setIsDashboardOpen(true)} />
+        <>
+          <CityDashboardButton onClick={() => setIsDashboardOpen(true)} />
+          <MockTrackerButton 
+            isActive={showMockTracker} 
+            onClick={() => setShowMockTracker(!showMockTracker)} 
+          />
+        </>
       )}
 
       {/* Mmda Dashboard Modal */}

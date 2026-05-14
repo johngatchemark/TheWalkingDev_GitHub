@@ -5,7 +5,7 @@ import { type MapboxGeoJSONFeature } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import ShadeMap from 'mapbox-gl-shadow-simulator';
 import SunCalc from 'suncalc';
-import { Coffee, Droplet, TreeDeciduous, Store, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Coffee, Droplet, TreeDeciduous, Store, AlertTriangle, ShieldCheck, User } from 'lucide-react';
 import type { RouteOption } from '../types';
 import NavigationUI from './NavigationUI';
 
@@ -35,6 +35,7 @@ interface MapBoxProps {
     hazards: boolean;
     safeStreets: boolean;
   };
+  showMockTracker: boolean;
 }
 
 interface TerrainTile { x: number; y: number; z: number; }
@@ -88,6 +89,7 @@ export default function MapBox({
   onMapPin,
   pinnedReportCoords,
   mapToggles,
+  showMockTracker,
 }: MapBoxProps) {
   const mapRef = useRef<MapRef>(null);
   const shadeMapRef = useRef<any>(null);
@@ -853,7 +855,34 @@ export default function MapBox({
         </Marker>
       ))}
 
-      {/* End Toggles Overlay Markers */}
+      {/* Mock User Tracker Markers */}
+      {showMockTracker && [
+        // Randomly generated denser population around the center area
+        ...Array.from({ length: 45 }).map((_, i) => ({
+          id: `u-${i}`,
+          coords: [
+            120.975 + Math.random() * 0.025, // Longitude range
+            14.585 + Math.random() * 0.030   // Latitude range
+          ] as [number, number]
+        }))
+      ].map(user => (
+        <Marker key={user.id} longitude={user.coords[0]} latitude={user.coords[1]} anchor="center">
+          <div style={{
+            background: 'rgba(56, 189, 248, 0.4)', // Translucent blue
+            color: 'white',
+            padding: '6px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1.5px solid rgba(255, 255, 255, 0.5)',
+            boxShadow: '0 0 15px rgba(56, 189, 248, 0.3)',
+            backdropFilter: 'blur(4px)'
+          }}>
+            <User size={14} fill="currentColor" />
+          </div>
+        </Marker>
+      ))}
 
     </Map>
       ) : (

@@ -1,6 +1,6 @@
-.city-dashboard-btn {
+.mock-tracker-btn {
   position: fixed;
-  z-index: 20;
+  z-index: 1000;
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -10,7 +10,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Glass-style background matching the app theme */
   background: rgba(22, 27, 34, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -23,27 +22,26 @@
     box-shadow 0.25s ease,
     background 0.25s ease;
   outline: none;
-  color: var(--accent-cool, #0098d9);
+  color: var(--text-main, #f0f6fc);
 }
 
 @media (min-width: 768px) {
-  .city-dashboard-btn {
+  .mock-tracker-btn {
     top: 24px;
-    right: 168px; /* Shifted left */
+    right: 24px; /* Rightmost */
     width: 56px;
     height: 56px;
   }
 }
 
 @media (max-width: 767px) {
-  .city-dashboard-btn {
-    right: 144px; /* Shifted left */
-    top: 180px; /* Below the direction selector */
-    z-index: 1000;
+  .mock-tracker-btn {
+    right: 16px;
+    top: 180px; /* Aligned with others */
   }
 }
 
-.city-dashboard-btn:hover {
+.mock-tracker-btn:hover {
   transform: scale(1.1);
   background: rgba(255, 255, 255, 0.1);
   box-shadow:
@@ -52,6 +50,11 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.city-dashboard-btn:active {
-  transform: scale(0.94);
+.mock-tracker-btn.active {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 2px #38bdf8,
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
