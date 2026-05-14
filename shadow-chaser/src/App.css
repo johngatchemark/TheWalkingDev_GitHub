@@ -1596,28 +1596,33 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .store-card-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 14px;
 }
 
 .store-metric {
-  padding: 12px;
-  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .store-metric-value {
-  display: block;
   font-weight: 700;
-  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: var(--text-main);
 }
 
 .store-metric-label {
   color: var(--text-muted);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .continue-route-btn {
@@ -4269,28 +4274,33 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .store-card-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 14px;
 }
 
 .store-metric {
-  padding: 12px;
-  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .store-metric-value {
-  display: block;
   font-weight: 700;
-  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: var(--text-main);
 }
 
 .store-metric-label {
   color: var(--text-muted);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .continue-route-btn {
@@ -4821,6 +4831,28 @@ input[type=range]::-webkit-slider-thumb {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+/* Mobile Integrated Map Toggles */
+.mobile-map-toggles {
+  display: none;
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: 20px;
+}
+
+@media (max-width: 767px) {
+  .mobile-map-toggles {
+    display: block;
+  }
+}
+
+.mobile-section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
 
   .stat-card {
     padding: 16px;

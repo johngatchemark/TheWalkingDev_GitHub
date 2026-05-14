@@ -21,7 +21,10 @@ import {
   Droplet,
   Store,
   User,
+  AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
+import MapToggles from "./MapToggles";
 import type { RouteData, RouteOption, LocationPoint } from "../types";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
@@ -184,6 +187,15 @@ interface RoutePanelProps {
   onStartNavigation: () => void;
   /** Called whenever the mobile sheet position changes so siblings can track it */
   onSheetChange?: (snap: "collapsed" | "mid" | "expanded", dragY: number) => void;
+  isNight: boolean;
+  onToggleNightMode: (night: boolean) => void;
+  mapToggles: {
+    shade: boolean;
+    coolZones: boolean;
+    hazards: boolean;
+    safeStreets: boolean;
+  };
+  onToggleMap: (key: string) => void;
 }
 
 function timeStringToMinutes(time: string): number {
@@ -306,6 +318,10 @@ export default function RoutePanel({
   setUserLocationCoords,
   onStartNavigation,
   onSheetChange,
+  isNight,
+  onToggleNightMode,
+  mapToggles,
+  onToggleMap,
 }: RoutePanelProps) {
   const [mobileSheetSnap, setMobileSheetSnap] = useState<
     "collapsed" | "mid" | "expanded"
@@ -341,7 +357,7 @@ export default function RoutePanel({
   const routeOptionsSectionRef = useRef<HTMLDivElement | null>(null);
   const shouldAutoScrollToOptionsRef = useRef(false);
 
-  const isNight = isNightFromTime(selectedTime);
+  // const isNight = isNightFromTime(selectedTime);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const menuDisplayName = MOCK_USER
     ? `${MOCK_USER.firstName} ${MOCK_USER.lastName}`
@@ -350,7 +366,7 @@ export default function RoutePanel({
     ? `${(MOCK_USER.firstName[0] ?? "") + (MOCK_USER.lastName[0] ?? "")}`.toUpperCase()
     : "Guest";
 
-  const coolZonesStores = [
+  const [coolZonesStores, setCoolZonesStores] = useState<any[]>([
     {
       id: "s1",
       name: "7‑Eleven Taft",
@@ -384,29 +400,53 @@ export default function RoutePanel({
       status: "Open",
       tags: ["Airconditioned", "Shade", "Safe at Night"],
     },
-    {
-      id: "s4",
-      name: "Rainforest Water Hub",
-      category: "Water station",
-      icon: <Droplet size={16} />,
-      rating: 4.4,
-      walkMinutes: 4,
-      shade: "Low",
-      status: "Open",
-      tags: ["Water"],
-    },
-    {
-      id: "s5",
-      name: "Sheltered Waiting Shed",
-      category: "Shade stop",
-      icon: <TreeDeciduous size={16} />,
-      rating: 4.2,
-      walkMinutes: 2,
-      shade: "Very High",
-      status: "Open",
-      tags: ["Shade", "Safe at Night"],
-    },
-  ];
+  ]);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchCoolZones() {
+      if (!MAPBOX_TOKEN) return;
+      const coords = origin.coords || [120.9856, 14.6022];
+      try {
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/cafe,convenience,park.json?proximity=${coords[0]},${coords[1]}&limit=5&access_token=${MAPBOX_TOKEN}`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!active || !data.features || data.features.length === 0) return;
+        
+        const mapped = data.features.map((f: any, idx: number) => {
+          const cat = f.properties?.category || (f.place_type && f.place_type[0]) || 'Place';
+          let icon = <Store size={16} />;
+          let shade = "Medium";
+          if (cat.toLowerCase().includes('park')) {
+            icon = <TreeDeciduous size={16} />;
+            shade = "High";
+          } else if (cat.toLowerCase().includes('cafe')) {
+            icon = <Coffee size={16} />;
+          } else if (cat.toLowerCase().includes('convenience')) {
+            icon = <ShoppingBag size={16} />;
+          }
+          
+          return {
+            id: f.id || `cz-${idx}`,
+            name: f.text,
+            category: cat.charAt(0).toUpperCase() + cat.slice(1),
+            icon,
+            rating: (Math.random() * 1 + 4).toFixed(1),
+            walkMinutes: Math.floor(Math.random() * 8) + 2,
+            shade,
+            status: "Open",
+            tags: ["Airconditioned", "Safe at Night", "Water"],
+          };
+        });
+        setCoolZonesStores(mapped);
+      } catch (err) {
+        console.error("Failed to fetch Mapbox cool zones", err);
+      }
+    }
+    fetchCoolZones();
+    return () => { active = false; };
+  }, [origin.coords]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters((prev) =>
@@ -1187,6 +1227,18 @@ export default function RoutePanel({
             >
               <Sun size={16} /> Choose Cooler Route
             </button>
+          </div>
+
+          {/* Mobile-only Map Toggles integration */}
+          <div className="mobile-map-toggles glass-panel">
+            <h4 className="mobile-section-title">Map Layers</h4>
+            <MapToggles 
+              isNightMode={isNight} 
+              onToggleNightMode={onToggleNightMode} 
+              toggles={mapToggles} 
+              onToggle={onToggleMap} 
+              layout="horizontal"
+            />
           </div>
 
           <hr className="route-content-divider route-button-divider" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Clock, Zap, Flame, X } from 'lucide-react';
+import { MapPin, Clock, Zap, Flame, X, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const ActivitySummary: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   // Mock data - simplified like Strava
@@ -55,6 +55,26 @@ const ActivitySummary: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             <Flame size={24} />
             <div className="stat-value">{walkData.calories}</div>
             <div className="stat-label">Calories</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="feedback-section" style={{ marginTop: '24px', padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+        <h3 style={{ fontSize: '1rem', marginBottom: '12px', textAlign: 'center' }}>You've arrived! How was your walk?</h3>
+        
+        <div className="feedback-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <span style={{ fontSize: '0.9rem', flex: 1 }}>Did this route feel safe?</span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="feedback-btn" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)' }}><ThumbsUp size={18} /></button>
+            <button className="feedback-btn" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)' }}><ThumbsDown size={18} /></button>
+          </div>
+        </div>
+
+        <div className="feedback-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.9rem', flex: 1 }}>Was this route comfortable (out of heat)?</span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="feedback-btn" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)' }}><ThumbsUp size={18} /></button>
+            <button className="feedback-btn" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer', color: 'var(--text-main)' }}><ThumbsDown size={18} /></button>
           </div>
         </div>
       </div>

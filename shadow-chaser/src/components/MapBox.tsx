@@ -5,7 +5,7 @@ import { type MapboxGeoJSONFeature } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import ShadeMap from 'mapbox-gl-shadow-simulator';
 import SunCalc from 'suncalc';
-import { Coffee, Droplet, TreeDeciduous, Store } from 'lucide-react';
+import { Coffee, Droplet, TreeDeciduous, Store, AlertTriangle, ShieldCheck } from 'lucide-react';
 import type { RouteOption } from '../types';
 import NavigationUI from './NavigationUI';
 
@@ -29,6 +29,12 @@ interface MapBoxProps {
   onMapPin?: (coords: [number, number]) => void;
   /** Currently pinned community-report coords (shows a marker on the map) */
   pinnedReportCoords?: [number, number] | null;
+  mapToggles?: {
+    shade: boolean;
+    coolZones: boolean;
+    hazards: boolean;
+    safeStreets: boolean;
+  };
 }
 
 interface TerrainTile { x: number; y: number; z: number; }
@@ -81,6 +87,7 @@ export default function MapBox({
   isPinMode = false,
   onMapPin,
   pinnedReportCoords,
+  mapToggles,
 }: MapBoxProps) {
   const mapRef = useRef<MapRef>(null);
   const shadeMapRef = useRef<any>(null);
@@ -785,7 +792,70 @@ export default function MapBox({
               </div>
             </Marker>
           )}
-        </Map>
+          {/* Cool Zones Markers */}
+      {mapToggles?.coolZones && [
+        { id: 'cz1', coords: [120.9880, 14.6095] as [number, number], label: 'UST Shade' },
+        { id: 'cz2', coords: [120.9806, 14.5822] as [number, number], label: 'Rizal Park' },
+        { id: 'cz3', coords: [120.9830, 14.5910] as [number, number], label: 'Intramuros Park' }
+      ].map(cz => (
+        <Marker key={cz.id} longitude={cz.coords[0]} latitude={cz.coords[1]} anchor="bottom">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div style={{
+              background: '#22c55e', color: 'white', padding: '8px', borderRadius: '50%',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <TreeDeciduous size={24} />
+            </div>
+            <div style={{ background: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+              {cz.label}
+            </div>
+          </div>
+        </Marker>
+      ))}
+
+      {/* Hazards Markers */}
+      {mapToggles?.hazards && [
+        { id: 'hz1', coords: [120.9860, 14.6035] as [number, number], label: 'Recto Construction' },
+        { id: 'hz2', coords: [120.9810, 14.5980] as [number, number], label: 'Broken Sidewalk' }
+      ].map(hz => (
+        <Marker key={hz.id} longitude={hz.coords[0]} latitude={hz.coords[1]} anchor="bottom">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div style={{
+              background: '#ef4444', color: 'white', padding: '8px', borderRadius: '50%',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <AlertTriangle size={24} />
+            </div>
+            <div style={{ background: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+              {hz.label}
+            </div>
+          </div>
+        </Marker>
+      ))}
+
+      {/* Safe Streets Markers */}
+      {mapToggles?.safeStreets && [
+        { id: 'ss1', coords: [120.9870, 14.6110] as [number, number], label: 'Dapitan Patrol' },
+        { id: 'ss2', coords: [120.9900, 14.6020] as [number, number], label: 'Legarda Safe Zone' }
+      ].map(ss => (
+        <Marker key={ss.id} longitude={ss.coords[0]} latitude={ss.coords[1]} anchor="bottom">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div style={{
+              background: '#10b981', color: 'white', padding: '8px', borderRadius: '50%',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <ShieldCheck size={24} />
+            </div>
+            <div style={{ background: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+              {ss.label}
+            </div>
+          </div>
+        </Marker>
+      ))}
+
+      {/* End Toggles Overlay Markers */}
+
+    </Map>
       ) : (
         <div style={{ padding: 40, color: 'white', background: '#111', height: '100%' }}>
           <h2>Mapbox Token Missing</h2>

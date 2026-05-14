@@ -4,6 +4,9 @@ import RoutePanel from './components/RoutePanel';
 import CommunityReportButton from './components/CommunityReportButton';
 import CommunityReportPanel from './components/CommunityReportPanel';
 import AuthModule from './components/AuthModule';
+import MapOverlayUI from './components/MapOverlayUI';
+import CityDashboardButton from './components/CityDashboardButton';
+import MmdaDashboard from './components/MmdaDashboard';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -55,8 +58,22 @@ function App() {
     [],
   );
 
-  // Community Report state
+  // Map Toggles state
+  const [mapToggles, setMapToggles] = useState({
+    shade: true,
+    coolZones: true,
+    hazards: true,
+    safeStreets: true
+  });
+
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  
+  // Lifted Auth State
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userHandle, setUserHandle] = useState('');
+
   const [pinnedCoords, setPinnedCoords] = useState<[number, number] | null>(null);
   const [pinnedLabel, setPinnedLabel] = useState<string | null>(null);
   const [isPinMode, setIsPinMode] = useState(false);
@@ -108,6 +125,10 @@ function App() {
 
   const isNight = isNightFromTime(selectedTime);
 
+  const handleToggleNightMode = (night: boolean) => {
+    setSelectedTime(night ? "20:00" : "12:00");
+  };
+
   return (
     <div className={`app-container ${isNight ? 'night-theme' : ''} ${isNavigating ? 'is-navigating' : ''}`}>
       {/* Mapbox Layer */}
@@ -151,6 +172,7 @@ function App() {
         isPinMode={isPinMode}
         onMapPin={handleMapPin}
         pinnedReportCoords={pinnedCoords}
+        mapToggles={mapToggles}
       />
 
       {/* Navigation UI Layer */}
@@ -173,15 +195,31 @@ function App() {
           setUserLocationCoords={setUserLocationCoords}
           onStartNavigation={handleStartNavigation}
           onSheetChange={handleSheetChange}
+          isNight={isNight}
+          onToggleNightMode={handleToggleNightMode}
+          mapToggles={mapToggles}
+          onToggleMap={(key) => setMapToggles(prev => ({ ...prev, [key]: !prev[key as keyof typeof mapToggles] }))}
         />
       )}
 
-      {/* Community Report floating button — always visible */}
-      <CommunityReportButton
-        mobileSheetSnap={isNavigating ? 'collapsed' : sheetSnap}
-        sheetDragY={isNavigating ? 0 : sheetDragY}
-        onClick={() => setIsReportOpen(true)}
-      />
+      {/* Map Overlays (Toggles & Cool Zones) - Hidden during navigation for cleaner view */}
+      {!isNavigating && (
+        <MapOverlayUI 
+          isNightMode={isNight} 
+          onToggleNightMode={handleToggleNightMode}
+          toggles={mapToggles}
+          onToggle={(key) => setMapToggles(prev => ({ ...prev, [key]: !prev[key as keyof typeof mapToggles] }))}
+        />
+      )}
+
+      {/* Community Report floating button — only visible if signed in */}
+      {isSignedIn && (
+        <CommunityReportButton
+          mobileSheetSnap={isNavigating ? 'collapsed' : sheetSnap}
+          sheetDragY={isNavigating ? 0 : sheetDragY}
+          onClick={() => setIsReportOpen(true)}
+        />
+      )}
 
       {/* Pin mode: instruction banner only — map must stay interactive */}
       {isPinMode && (
@@ -207,8 +245,30 @@ function App() {
       />
 
 
-      {/* Top Right Profile / Auth */}
-      <AuthModule />
+      {/* Top Right Profile / Auth / Dashboard */}
+      <AuthModule 
+        isSignedIn={isSignedIn} 
+        setIsSignedIn={setIsSignedIn} 
+        name={userName} 
+        setName={setUserName} 
+        username={userHandle} 
+        setUsername={setUserHandle} 
+      />
+      
+      {!isNavigating && (
+        <CityDashboardButton onClick={() => setIsDashboardOpen(true)} />
+      )}
+
+      {/* Mmda Dashboard Modal */}
+      {isDashboardOpen && (
+        <MmdaDashboard 
+          onClose={() => setIsDashboardOpen(false)}
+          routeOptions={routeOptions}
+          selectedRouteId={selectedRouteId}
+          isNight={isNight}
+          nightLightScores={nightLightScores}
+        />
+      )}
 
       {/* Map Legend (hidden on mobile) */}
       <div className="map-legend glass-panel hidden-mobile">

@@ -1,17 +1,27 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, LogOut } from 'lucide-react';
 import './AuthModule.css';
 
-const AuthModule: React.FC = () => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+interface AuthModuleProps {
+  isSignedIn: boolean;
+  setIsSignedIn: (val: boolean) => void;
+  name: string;
+  setName: (val: string) => void;
+  username: string;
+  setUsername: (val: string) => void;
+}
+
+const AuthModule: React.FC<AuthModuleProps> = ({
+  isSignedIn,
+  setIsSignedIn,
+  name,
+  setName,
+  username,
+  setUsername
+}) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  
-  // Credentials state
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
