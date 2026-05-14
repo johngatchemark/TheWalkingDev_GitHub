@@ -20,6 +20,7 @@ import {
   ShoppingBag,
   Droplet,
   Store,
+  User,
 } from "lucide-react";
 import type { RouteData, RouteOption, LocationPoint } from "../types";
 
@@ -330,6 +331,11 @@ export default function RoutePanel({
   const [resolvingDest, setResolvingDest] = useState(false);
   const [locatingMe, setLocatingMe] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [authName, setAuthName] = useState("");
+  const [authUsername, setAuthUsername] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const originDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const destDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1016,28 +1022,84 @@ export default function RoutePanel({
             </button>
             {isMenuOpen && (
               <div className={`menu-panel-popover glass-panel ${isNight ? "night-theme" : ""}`}>
-                <div className="menu-user-row">
-                  <div className={`menu-user-avatar ${MOCK_USER ? "" : "guest"}`}>
-                    {menuAvatarLabel}
-                  </div>
-                  <div className="menu-user-text">
-                    <div className="menu-user-name">{menuDisplayName}</div>
-                    <div className="menu-user-role">
-                      {MOCK_USER ? "Logged in" : "Guest"}
+                {!isSignedIn ? (
+                  !showLoginForm ? (
+                    <div className="menu-options-list">
+                      <button type="button" className="menu-option-btn" onClick={() => setShowLoginForm(true)}>
+                        Sign In
+                      </button>
                     </div>
-                  </div>
-                </div>
-                <div className="menu-options-list">
-                  <button type="button" className="menu-option-btn">
-                    View Profile
-                  </button>
-                  <button type="button" className="menu-option-btn">
-                    Settings
-                  </button>
-                  <button type="button" className="menu-option-btn">
-                    Help &amp; Feedback
-                  </button>
-                </div>
+                  ) : (
+                    <div className="auth-form" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Name" 
+                        value={authName} 
+                        onChange={(e) => setAuthName(e.target.value)} 
+                        style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="Username" 
+                        value={authUsername} 
+                        onChange={(e) => setAuthUsername(e.target.value)} 
+                        style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                      />
+                      <input 
+                        type="password" 
+                        placeholder="Password" 
+                        value={authPassword} 
+                        onChange={(e) => setAuthPassword(e.target.value)} 
+                        style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                      />
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                        <button 
+                          type="button" 
+                          className="menu-option-btn" 
+                          onClick={() => {
+                            if (authName && authUsername && authPassword) {
+                              setIsSignedIn(true);
+                              setShowLoginForm(false);
+                            } else {
+                              alert("Please fill all fields for mock login");
+                            }
+                          }}
+                          style={{ flex: 1, justifyContent: 'center', background: 'var(--accent-cool)', color: '#fff', border: 'none' }}
+                        >
+                          Submit
+                        </button>
+                        <button 
+                          type="button" 
+                          className="menu-option-btn" 
+                          onClick={() => setShowLoginForm(false)}
+                          style={{ flex: 1, justifyContent: 'center' }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <>
+                    <div className="menu-user-row">
+                      <div className="menu-user-avatar">
+                        <User size={20} />
+                      </div>
+                      <div className="menu-user-text">
+                        <div className="menu-user-name">{authName}</div>
+                        <div className="menu-user-role">@{authUsername}</div>
+                      </div>
+                    </div>
+                    <div className="menu-options-list">
+                      <button type="button" className="menu-option-btn" onClick={() => {
+                        setIsSignedIn(false);
+                        setAuthPassword("");
+                      }}>
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
