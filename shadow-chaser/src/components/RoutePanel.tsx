@@ -459,7 +459,7 @@ export default function RoutePanel({
   const filteredStores =
     activeFilters.length > 0
       ? coolZonesStores.filter((store) =>
-          store.tags.some((tag) => activeFilters.includes(tag)),
+          store.tags.some((tag: any) => activeFilters.includes(tag)),
         )
       : coolZonesStores;
 
