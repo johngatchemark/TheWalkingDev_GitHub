@@ -595,7 +595,14 @@ export default function RoutePanel({
     if (window.innerWidth >= 768 || dragStartYRef.current === null) return;
     const currentY = e.touches[0].clientY;
     const delta = currentY - dragStartYRef.current;
-    setSheetDragY(clampDragY(delta));
+    
+    // Prevent dragging the sheet higher than 'expanded' (top limit)
+    let clampedDelta = delta;
+    if (mobileSheetSnap === "expanded" && delta < 0) {
+      clampedDelta = delta * 0.2; // Add some resistance/rubber-banding
+    }
+    
+    setSheetDragY(clampDragY(clampedDelta));
   };
 
   const handleSheetTouchEnd = () => {

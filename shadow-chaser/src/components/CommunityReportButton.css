@@ -46,12 +46,11 @@
 /* ── Mobile placement: above the route panel ─────────────────────────────── */
 @media (max-width: 767px) {
   .community-report-btn {
-    /* Horizontally: right side with some margin */
-    right: 14px;
+    right: 144px;
     left: auto;
-    top: auto;
-    /* bottom is driven by the JS-computed CSS var --mobile-bottom */
-    bottom: var(--mobile-bottom, 72px);
+    top: 180px; /* Below the direction selector */
+    bottom: auto !important;
+    z-index: 1000;
   }
 }
 

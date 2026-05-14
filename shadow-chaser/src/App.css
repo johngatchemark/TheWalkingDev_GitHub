@@ -278,8 +278,9 @@ body {
     border-radius: 24px 24px 0 0;
     padding: 8px 12px 12px 12px;
     gap: 4px;
-    height: calc(100vh - 120px);
-    max-height: calc(100vh - 120px);
+    height: calc(100vh - 260px);
+    max-height: calc(100vh - 260px);
+    z-index: 50; /* Lower than icons */
     border-bottom: none;
     transform: var(--mobile-sheet-transform, translateY(42%));
   }
@@ -3034,8 +3035,9 @@ body {
     border-radius: 24px 24px 0 0;
     padding: 8px 12px 12px 12px;
     gap: 4px;
-    height: calc(100vh - 120px);
-    max-height: calc(100vh - 120px);
+    height: calc(100vh - 260px);
+    max-height: calc(100vh - 260px);
+    z-index: 50; /* Lower than icons */
     border-bottom: none;
     transform: var(--mobile-sheet-transform, translateY(42%));
   }
