@@ -34,7 +34,7 @@
 @media (min-width: 768px) {
   .community-report-btn {
     top: 24px;
-    right: 24px;
+    right: 96px;
     bottom: auto !important;
     left: auto;
     /* Slightly larger on desktop */

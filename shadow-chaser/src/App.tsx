@@ -3,6 +3,7 @@ import MapBox from './components/MapBox';
 import RoutePanel from './components/RoutePanel';
 import CommunityReportButton from './components/CommunityReportButton';
 import CommunityReportPanel from './components/CommunityReportPanel';
+import AuthModule from './components/AuthModule';
 import './App.css';
 import type { RouteOption, LocationPoint } from './types';
 
@@ -206,11 +207,8 @@ function App() {
       />
 
 
-      {/* Top Right Calendar Widget (hidden on mobile) */}
-      {/* <div className="calendar-widget glass-panel hidden-mobile">
-        <Calendar size={16} color="var(--accent-cool)" />
-        <span className="cal-text">Synced: john@domain.com</span>
-      </div> */}
+      {/* Top Right Profile / Auth */}
+      <AuthModule />
 
       {/* Map Legend (hidden on mobile) */}
       <div className="map-legend glass-panel hidden-mobile">

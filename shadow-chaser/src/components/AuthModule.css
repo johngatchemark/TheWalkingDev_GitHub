@@ -1,0 +1,215 @@
+.auth-module-container {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.profile-circle-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--glass-bg, rgba(22, 27, 34, 0.7));
+  backdrop-filter: var(--glass-blur, blur(20px));
+  -webkit-backdrop-filter: var(--glass-blur, blur(20px));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.profile-circle-btn:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.avatar-text {
+  color: var(--text-main, #f0f6fc);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Modal Overlay Styles */
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.auth-popover {
+  min-width: 280px;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  background: var(--glass-bg, rgba(22, 27, 34, 0.95));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+}
+
+.sign-in-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.prompt-text {
+  font-size: 0.85rem;
+  color: var(--text-muted, #8b949e);
+}
+
+.prompt-signin-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-cool, #0098d9);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prompt-signin-btn:hover {
+  opacity: 0.9;
+}
+
+/* Form Styles */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.form-header h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-main, #f0f6fc);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted, #8b949e);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #ff4d4f;
+}
+
+.auth-form input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-main, #f0f6fc);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--accent-cool, #0098d9);
+}
+
+.submit-btn {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-cool, #0098d9);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Signed In State */
+.profile-display {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.profile-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main, #f0f6fc);
+}
+
+.profile-username {
+  font-size: 0.8rem;
+  color: var(--text-muted, #8b949e);
+}
+
+.logout-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-main, #f0f6fc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 77, 79, 0.15);
+  border-color: rgba(255, 77, 79, 0.3);
+  color: #ff4d4f;
+}
+
+@media (max-width: 768px) {
+  .auth-module-container {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-circle-btn {
+    width: 56px;
+    height: 56px;
+  }
+}
